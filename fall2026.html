@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>어게인 학원 — 2026 2학기 차량 시간표 조회</title>
+<style>
+  :root { --blue:#2563eb; --blue-d:#1d4ed8; --amber:#b45309; --green:#166534; --orange:#9a3412; }
+  * { box-sizing:border-box; }
+  body { font-family:"Apple SD Gothic Neo","Noto Sans KR",sans-serif; margin:0; background:#f1f5f9; color:#111; line-height:1.55; }
+  .wrap { max-width:560px; margin:0 auto; padding:16px 12px 60px; }
+  h1 { font-size:1.2rem; color:var(--blue-d); margin:8px 0 2px; }
+  .sub { color:#475569; font-size:.88rem; margin-bottom:14px; }
+  .search { background:#fff; border-radius:14px; padding:16px 14px; box-shadow:0 1px 4px rgba(0,0,0,.1); margin:12px 0; }
+  .search label { font-weight:700; font-size:.95rem; }
+  .row { display:flex; gap:8px; margin-top:8px; }
+  input[type=text] { flex:1; font-size:1.05rem; padding:10px 12px; border:2px solid #cbd5e1; border-radius:10px; outline:none; }
+  input[type=text]:focus { border-color:var(--blue); }
+  button { font-size:1rem; font-weight:700; padding:10px 18px; border:0; border-radius:10px; background:var(--blue); color:#fff; }
+  .err { color:#b91c1c; font-size:.9rem; margin-top:8px; display:none; }
+  .notice { background:#fff7ed; border:2px solid #fdba74; border-radius:12px; padding:12px 14px; margin:14px 0; }
+  .notice h2 { font-size:.98rem; color:var(--amber); margin:0 0 8px; }
+  .notice li { margin:6px 0; font-size:.9rem; }
+  .notice b { color:var(--amber); }
+  .cards { display:none; }
+  .child { font-size:1.05rem; font-weight:800; color:var(--blue-d); margin:16px 0 4px; }
+  .card { background:#fff; border-radius:14px; padding:14px; margin:10px 0; box-shadow:0 1px 4px rgba(0,0,0,.09); }
+  .card h3 { margin:0 0 8px; font-size:1rem; color:var(--blue-d); }
+  .chip { display:inline-block; background:#e0e7ff; color:#3730a3; border-radius:999px; padding:2px 10px; font-size:.8rem; font-weight:700; margin-left:6px; vertical-align:middle; }
+  .line { display:flex; align-items:baseline; gap:8px; padding:7px 0; border-top:1px dashed #e2e8f0; font-size:.95rem; }
+  .line:first-of-type { border-top:0; }
+  .tag { flex:none; width:44px; text-align:center; border-radius:8px; font-size:.8rem; font-weight:800; padding:3px 0; }
+  .tag.up { background:#dcfce7; color:var(--green); }
+  .tag.down { background:#ffedd5; color:var(--orange); }
+  .tm { flex:none; font-weight:800; font-size:1.05rem; }
+  .pl { color:#334155; }
+  .memo { font-size:.82rem; color:#64748b; margin-top:6px; }
+  footer { text-align:center; color:#94a3b8; font-size:.78rem; margin-top:26px; line-height:1.8; }
+  #ver { display:inline-block; background:#e2e8f0; color:#475569; border-radius:999px; padding:2px 10px; font-size:.72rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>어게인 실험과학·수학 학원<br>2026 2학기 차량 시간표 조회</h1>
+<div class="sub">적용: 2026. 8. 17.(월)부터 2학기 동안 · 시간·정류장은 학원과 협의 후에만 변경됩니다</div>
+
+<div class="search">
+  <label for="nm">아이 이름을 입력해 주세요</label>
+  <div class="row">
+    <input id="nm" type="text" placeholder="예: 홍길동" autocomplete="off">
+    <button onclick="go()">조회</button>
+  </div>
+  <div class="err" id="err">등록된 이름을 찾지 못했어요. 이름을 다시 확인해 주세요. (띄어쓰기 없이 입력)</div>
+</div>
+
+<div class="notice">
+  <h2>꼭 읽어주세요 — 2학기 차량 운행 기준</h2>
+  <ul>
+    <li>등원 차량은 <b>수업 시작 4~7분 전</b>에 학원에 도착하도록 운행하고, 정류장마다 <b>1분만 정차</b>합니다.</li>
+    <li>하원 차량은 수업이 끝난 뒤 <b>종료 4분 뒤에 학원에서 출발</b>합니다. 예) 3:35 종료 → 3:39 학원 출발 → 정류장 도착은 그 이후입니다.</li>
+    <li>이번 학기 시간표는 여유가 <b>거의 없이 짜여 있습니다.</b> 표시된 승차 시각 <b>2~3분 전에</b> 정류장에 나와 주세요.</li>
+    <li>승차 시각에 아이가 없으면 차량은 <b>바로 출발</b>합니다. 한 명이 늦으면 뒤에 타는 친구들이 모두 늦어져서요. 놓치면 학원으로 바로 연락 주세요.</li>
+    <li>교통 상황에 따라 표시 시각과 1~3분 차이가 날 수 있습니다. 표의 시각은 <b>그 정류장을 출발하는 시각</b>입니다.</li>
+    <li>2학기부터는 평일 등원이 <b>학교 앞 승차</b>인 학생이 있습니다. 장소를 꼭 확인해 주세요.</li>
+  </ul>
+</div>
+
+<div class="cards" id="cards"></div>
+
+<footer>어게인 실험과학·수학 학원 · 시간·정류장 변경 문의는 학원으로 연락 주세요<br>
+<span id="ver">최종 갱신: 2026-08-16 (2학기 시간표 확정판)</span></footer>
+</div>
+
+<script>
+const P1 = "1교시 수업 2:05~3:35", P2 = "2교시 수업 3:40~5:15", P3 = "3교시 수업 5:20~6:50";
+const S1 = "1교시 수업 10:30~12:05", S2 = "2교시 수업 1:00~2:35", S4 = "4교시 수업 4:20~5:55";
+const NODOWN = "하원 차량 이용 없음";
+const NOUP = "등원 차량 이용 없음 (자가 등원)";
+
+const DATA = {
+"김예후":[
+ {d:"월요일",p:"1교시 수업 2:05~3:35",up:["1:38", "별하람1단지 후문 상가 키즈스테이션"],dn:["4:12", "별하람1단지 후문 상가 키즈스테이션"]}],
+"박해온":[
+ {d:"월요일",p:"1교시 수업 2:05~3:35",up:["1:20", "우미린 파크힐스 정문 키즈스테이션"],dn:["3:54", "우미린 파크힐스 정문 키즈스테이션"]}],
+"윤하율":[
+ {d:"월요일",p:"1교시 수업 2:05~3:35",up:["1:54", "운정자이 시그니처 정문 키즈스테이션"],dn:["3:43", "크크문구 앞"]},
+ {d:"화요일",p:"1교시 수업 2:05~3:35",up:["1:52", "운정자이 시그니처 정문 키즈스테이션"],dn:["3:43", "크크문구 앞"]},
+ {d:"목요일",p:"2교시 수업 3:40~5:15",up:["3:27", "운정자이 시그니처 정문 키즈스테이션"],dn:["5:29", "운정자이 시그니처 정문 키즈스테이션"]},
+ {d:"토요일",p:"1교시 수업 10:30~12:05",up:["10:14", "운정자이 시그니처 후문 키즈스테이션"],dn:["12:22", "운정자이 시그니처 후문 키즈스테이션"]}],
+"정지아":[
+ {d:"월요일",p:"2교시 수업 3:40~5:15",up:["3:18", "힐스테이트운정 GATE2"],dn:null,m:"하원 차량은 이용하지 않습니다. (등원만)"},
+ {d:"수요일",p:"2교시 수업 3:40~5:15",up:["3:27", "힐스테이트운정 GATE2"],dn:["5:25", "힐스테이트운정 GATE2"]},
+ {d:"금요일",p:"2교시 수업 3:40~5:15",up:["3:14", "힐스테이트운정 GATE2"],dn:null,m:"하원 차량은 이용하지 않습니다. (등원만)"}],
+"제갈시아":[
+ {d:"월요일",p:"2교시 수업 3:40~5:15",up:["3:08", "에듀하이 해오름1단지 정문"],dn:["5:38", "에듀하이 해오름1단지 정문"]},
+ {d:"수요일",p:"2교시 수업 3:40~5:15",up:["3:17", "에듀하이 해오름1단지 정문"],dn:["5:33", "에듀하이 해오름1단지 정문"]}],
+"제갈시현":[
+ {d:"월요일",p:"2교시 수업 3:40~5:15",up:["3:08", "에듀하이 해오름1단지 정문"],dn:["5:38", "에듀하이 해오름1단지 정문"]},
+ {d:"수요일",p:"2교시 수업 3:40~5:15",up:["3:17", "에듀하이 해오름1단지 정문"],dn:["5:33", "에듀하이 해오름1단지 정문"]},
+ {d:"목요일",p:"2교시 수업 3:40~5:15",up:["3:14", "에듀하이 해오름1단지 정문"],dn:["5:35", "에듀하이 해오름1단지 정문"]}],
+"최서영":[
+ {d:"월요일",p:"2교시 수업 3:40~5:15",up:["3:26", "해솔8단지 더테라스 정문"],dn:["5:28", "해솔8단지 더테라스 정문"]},
+ {d:"목요일",p:"2교시 수업 3:40~5:15",up:["3:01", "GS25 운정가온점(가온초 정문 건너편)"],dn:["5:49", "해솔8단지 더테라스 정문"]},
+ {d:"금요일",p:"1교시 수업 2:05~3:35",up:["1:46", "해솔8단지 더테라스 정문"],dn:["3:49", "해솔8단지 더테라스 정문"]}],
+"민리오":[
+ {d:"월요일",p:"3교시 수업 5:20~6:50",up:["5:10", "힐스테이트운정 GATE1"],dn:["6:59", "힐스테이트운정 GATE1"]}],
+"박소이":[
+ {d:"월요일",p:"3교시 수업 5:20~6:50",up:["4:50", "가람4단지 한양수자인 정문"],dn:["7:15", "가람4단지 한양수자인 정문"]},
+ {d:"수요일",p:"3교시 수업 5:20~6:50",up:["5:03", "가람4단지 한양수자인 정문"],dn:["7:03", "가람4단지 한양수자인 정문"]},
+ {d:"금요일",p:"3교시 수업 5:20~6:50",up:["4:57", "가람4단지 한양수자인 정문"],dn:["7:06", "가람4단지 한양수자인 정문"]}],
+"이라온":[
+ {d:"월요일",p:"3교시 수업 5:20~6:50",up:["5:01", "아이파크 2게이트"],dn:["7:04", "아이파크 2게이트"]}],
+"정이솔":[
+ {d:"월요일",p:"3교시 수업 5:20~6:50",up:["5:03", "아이파크 3게이트 버스스테이션"],dn:["7:05", "아이파크 3게이트 버스스테이션"]}],
+"정이준":[
+ {d:"월요일",p:"3교시 수업 5:20~6:50",up:["5:03", "아이파크 3게이트 버스스테이션"],dn:["7:05", "아이파크 3게이트 버스스테이션"]},
+ {d:"수요일",p:"3교시 수업 5:20~6:50",up:null,dn:["7:14", "아이파크 3게이트 버스스테이션"],m:"등원 차량은 이용하지 않습니다. (하원만)"},
+ {d:"토요일",p:"1교시 수업 10:30~12:05",up:["9:58", "아이파크 3게이트 버스스테이션"],dn:["12:28", "아이파크 3게이트 버스스테이션"]}],
+"박지원":[
+ {d:"화요일",p:"1교시 수업 2:05~3:35",up:["1:38", "GS25 운정가온점(가온초 정문 건너편)"],dn:["3:53", "해솔8단지 더테라스 정문"]}],
+"이지오":[
+ {d:"화요일",p:"1교시 수업 2:05~3:35",up:["1:57", "산들초 정문"],dn:["3:44", "산들초 정문"]}],
+"최지혁":[
+ {d:"화요일",p:"1교시 수업 2:05~3:35",up:["1:45", "청암초 정문"],dn:null,m:"하원 차량은 이용하지 않습니다. (등원만)"}],
+"안시온":[
+ {d:"화요일",p:"2교시 수업 3:40~5:15",up:["3:24", "석곶초 건너편 멜로디탕후루"],dn:["5:25", "해링턴플레이스 물향기3단지 정문 키즈스테이션"]},
+ {d:"목요일",p:"2~3교시 연속 수업 3:40~6:50",up:["3:24", "석곶초 건너편 멜로디탕후루"],dn:["7:05", "해링턴플레이스 물향기3단지 정문 키즈스테이션"]}],
+"천다원":[
+ {d:"화요일",p:"2~3교시 연속 수업 3:40~6:50",up:["3:24", "석곶초 건너편 멜로디탕후루"],dn:["7:06", "상록경남아너스빌 정문(책향기로 쪽)"]},
+ {d:"목요일",p:"2교시 수업 3:40~5:15",up:["3:24", "석곶초 건너편 멜로디탕후루"],dn:["6:10", "상록경남아너스빌 정문(책향기로 쪽)"],m:"하원은 수업 후 학원에서 잠시 기다렸다가 2차 차량으로 출발합니다."}],
+"송지운":[
+ {d:"화요일",p:"3교시 수업 5:20~6:50",up:["4:56", "화성파크드림 시그니처 정문 키즈스테이션"],dn:["6:57", "화성파크드림 시그니처 정문 키즈스테이션"]}],
+"조연우":[
+ {d:"화요일",p:"3교시 수업 5:20~6:50",up:["5:05", "동문디이스트 정문"],dn:["7:11", "동문디이스트 정문"]}],
+"송준영":[
+ {d:"수요일",p:"1교시 수업 2:05~3:35",up:["1:47", "해솔도서관 주차장"],dn:["3:45", "해솔4단지 벽산우남연리지 정문"]}],
+"진시우":[
+ {d:"수요일",p:"1교시 수업 2:05~3:35",up:["1:52", "힐스테이트운정 GATE2"],dn:["3:51", "힐스테이트운정 GATE1"]}],
+"윤하린":[
+ {d:"목요일",p:"2교시 수업 3:40~5:15",up:["3:32", "산들초 정문"],dn:["5:23", "산내2단지 센트럴리움 2번게이트"]}],
+"최여훈":[
+ {d:"목요일",p:"2교시 수업 3:40~5:15",up:["3:32", "산들초 정문"],dn:["5:23", "산내2단지 센트럴리움 2번게이트"]}],
+"송지안":[
+ {d:"목요일",p:"2교시 수업 3:40~5:15",up:["3:10", "디에트르 에듀타운 맘스테이션"],dn:["5:39", "디에트르 에듀타운 맘스테이션"]}],
+"황서후":[
+ {d:"목요일",p:"2교시 수업 3:40~5:15",up:null,dn:["6:02", "화성파크드림 시그니처 정문 키즈스테이션"],m:"등원 차량은 이용하지 않습니다. (하원만) 하원은 수업 후 학원에서 잠시 기다렸다가 2차 차량으로 출발합니다. 9월부터 이용합니다."}],
+"성하진":[
+ {d:"목요일",p:"2~3교시 연속 수업 3:40~6:50",up:null,dn:["7:00", "힐스테이트운정 GATE2"],m:"등원 차량은 이용하지 않습니다. (하원만)"}],
+"이레":[
+ {d:"목요일",p:"3교시 수업 5:20~6:50",up:null,dn:["7:22", "성호2차파크힐 103동(조리읍)"],m:"등원 차량은 이용하지 않습니다. (하원만) 8월 27일(목) 체험 수업부터 이용합니다."}],
+"김우주":[
+ {d:"금요일",p:"1교시 수업 2:05~3:35",up:["1:49", "GS25 운정가온점(가온초 정문 건너편)"],dn:["3:46", "가온로 112 (건강공원 쪽)"]}],
+"김소유":[
+ {d:"금요일",p:"2교시 수업 3:40~5:15",up:["3:24", "숲속길3단지 동문굿모닝힐 정문"],dn:["5:44", "숲속길3단지 동문굿모닝힐 정문"]}],
+"김수현":[
+ {d:"금요일",p:"2교시 수업 3:40~5:15",up:["3:24", "숲속길3단지 동문굿모닝힐 정문"],dn:["5:44", "숲속길3단지 동문굿모닝힐 정문"]}],
+"황우진":[
+ {d:"금요일",p:"2교시 수업 3:40~5:15",up:["3:08", "지산프라자 지산중 정문"],dn:["5:28", "지산프라자 지산중 정문"]}],
+"권상우":[
+ {d:"금요일",p:"3교시 수업 5:20~6:50",up:["5:04", "가람9단지 남양휴튼 GS25(운정본점)"],dn:["7:00", "가람9단지 남양휴튼 GS25(운정본점)"]}],
+"김하영":[
+ {d:"토요일",p:"1교시 수업 10:30~12:05",up:["10:07", "푸르지오 파르세나 정문"],dn:["12:16", "푸르지오 파르세나 정문"]}],
+"구도윤":[
+ {d:"토요일",p:"2교시 수업 1:00~2:35",up:["12:38", "롯데캐슬 파크타운2차 정문 키즈스테이션"],dn:["2:53", "롯데캐슬 파크타운2차 정문 키즈스테이션"]}],
+"안이든":[
+ {d:"토요일",p:"2교시 수업 1:00~2:35",up:["12:45", "센트럴 푸르지오 정문(GATE1)"],dn:["2:47", "센트럴 푸르지오 정문(GATE1)"]}],
+"송준서":[
+ {d:"토요일",p:"4교시 수업 4:20~5:55",up:["4:05", "해솔4단지 벽산우남연리지 정문"],dn:["6:05", "해솔4단지 벽산우남연리지 정문"]}]
+};
+
+function go() {
+  const name = document.getElementById("nm").value.replace(/\s/g, "");
+  const err = document.getElementById("err");
+  const box = document.getElementById("cards");
+  const rows = DATA[name];
+  if (!rows) { err.style.display = "block"; box.style.display = "none"; box.innerHTML = ""; return; }
+  err.style.display = "none";
+  let h = `<div class="child">${name} 학생 2학기 차량 시간표 (${rows.length}일)</div>`;
+  for (const r of rows) {
+    h += `<div class="card"><h3>${r.d}<span class="chip">${r.p}</span></h3>`;
+    h += r.up
+      ? `<div class="line"><span class="tag up">등원</span><span class="tm">${r.up[0]}</span><span class="pl">${r.up[1]}</span></div>`
+      : `<div class="line"><span class="tag up">등원</span><span class="pl">${NOUP}</span></div>`;
+    h += r.dn
+      ? `<div class="line"><span class="tag down">하원</span><span class="tm">${r.dn[0]}</span><span class="pl">${r.dn[1]}</span></div>`
+      : `<div class="line"><span class="tag down">하원</span><span class="pl">${NODOWN}</span></div>`;
+    if (r.m) h += `<div class="memo">※ ${r.m}</div>`;
+    h += `</div>`;
+  }
+  box.innerHTML = h;
+  box.style.display = "block";
+}
+document.getElementById("nm").addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+</script>
+</body>
+</html>
