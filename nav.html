@@ -37,13 +37,15 @@ h1{font-family:'Gothic A1',sans-serif;font-weight:900;font-size:22px;margin:0;le
 .tab[aria-selected="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
 .tab:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
 .list{display:flex;flex-direction:column;gap:8px}
-.row{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 12px;
-  display:grid;grid-template-columns:64px 1fr auto;gap:10px;align-items:center;box-shadow:var(--shadow)}
+.row{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 11px;
+  display:grid;grid-template-columns:52px 1fr auto;gap:9px;align-items:center;box-shadow:var(--shadow)}
+.row.past{opacity:.42}
+.row.next{border-color:var(--amber);box-shadow:0 0 0 2px var(--amber) inset,var(--shadow)}
 .row.base{background:transparent;border-style:dashed;box-shadow:none;padding:7px 12px}
-.t{font-family:'Gothic A1',sans-serif;font-weight:900;font-size:21px;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
+.t{font-family:'Gothic A1',sans-serif;font-weight:900;font-size:19px;font-variant-numeric:tabular-nums;letter-spacing:-.03em}
 .row.base .t{font-size:16px;font-weight:700;color:var(--muted)}
 .mid{min-width:0}
-.p{font-weight:600;font-size:15.5px;line-height:1.3;word-break:keep-all}
+.p{font-weight:600;font-size:15px;line-height:1.3;word-break:keep-all}
 .row.base .p{font-weight:500;font-size:14px;color:var(--muted)}
 .w{font-family:'Gothic A1',sans-serif;font-weight:700;font-size:15px;margin-top:2px}
 .n{color:var(--muted);font-size:12.5px;margin-top:2px;word-break:keep-all}
@@ -52,13 +54,13 @@ h1{font-family:'Gothic A1',sans-serif;font-weight:900;font-size:22px;margin:0;le
 .tag.up{background:var(--up-bg);color:var(--up)}
 .tag.down{background:var(--down-bg);color:var(--down)}
 .btns{display:flex;flex-direction:column;gap:5px}
-.btn{min-height:38px;min-width:74px;border-radius:10px;color:#fff;text-decoration:none;
+.btn{min-height:40px;min-width:60px;border-radius:10px;color:#fff;text-decoration:none;
   display:flex;align-items:center;justify-content:center;font-family:'Gothic A1',sans-serif;
   font-weight:700;font-size:14px;letter-spacing:-.01em}
 .btn.n1{background:var(--naver)} .btn.t1{background:var(--tmap)}
 .btn:active{filter:brightness(.9)} .btn:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
 .note{margin:14px 2px 0;color:var(--muted);font-size:12.5px;line-height:1.6}
-@media (max-width:400px){.row{grid-template-columns:56px 1fr auto;gap:8px}.btn{min-width:62px;font-size:13px}}
+@media (max-width:380px){.row{grid-template-columns:48px 1fr auto;gap:7px}.btn{min-width:54px;font-size:13px}.p{font-size:14.5px}}
 </style>
 <div class="wrap">
 <header><h1>어게인 차량 네비</h1><span class="sub">2026 2학기 · 정류장 누르면 네비 목적지로 바로</span></header>
@@ -74,22 +76,29 @@ const order = ['월','화','수','목','금','토'].filter(d=>DATA[d]).concat(Ob
 const enc = encodeURIComponent;
 function naverURL(r){return `nmap://route/car?dlat=${r.lat}&dlng=${r.lng}&dname=${enc(r.nav)}&appname=again.shuttle`}
 function tmapURL(r){return `tmap://route?goalname=${enc(r.nav)}&goaly=${r.lat}&goalx=${r.lng}`}
+const mins = t => { const [h, m] = t.split(':').map(Number); return (h < 9 ? h + 12 : h) * 60 + m };
+const trim = (n, w) => w ? w.split('·').reduce((a, x) => a.split(x + ' ').join(''), n) : n;
 function render(day){
   list.innerHTML = '';
-  for (const r of DATA[day]) {
+  const now = new Date(), nowM = now.getHours() * 60 + now.getMinutes();
+  const isToday = day === ['일','월','화','수','목','금','토'][now.getDay()];
+  const nextIdx = isToday ? DATA[day].findIndex(r => mins(r.t) >= nowM) : -1;
+  DATA[day].forEach((r, i) => {
     const el = document.createElement('div');
-    el.className = 'row' + (r.k === 'base' ? ' base' : '');
+    el.className = 'row' + (r.k === 'base' ? ' base' : '')
+      + (nextIdx >= 0 && i < nextIdx ? ' past' : '') + (i === nextIdx ? ' next' : '');
     const tag = r.k === '승' ? '<span class="tag up">승차</span>' : r.k === '하' ? '<span class="tag down">하차</span>' : '';
     el.innerHTML = `<div class="t">${r.t}</div><div class="mid">
       <div class="p">${tag}${r.p}</div>
       ${r.w ? `<div class="w">${r.w}</div>` : ''}
-      ${r.n ? `<div class="n">${r.n}</div>` : ''}</div>
+      ${r.n ? `<div class="n">${trim(r.n, r.w)}</div>` : ''}</div>
       ${r.k === 'base' && !r.p.includes('도착') ? '<div></div>' : `<div class="btns">
         <a class="btn n1" href="${naverURL(r)}">네이버</a>
         <a class="btn t1" href="${tmapURL(r)}">티맵</a>
       </div>`}`;
     list.appendChild(el);
-  }
+  });
+  if (nextIdx > 0) list.children[nextIdx].scrollIntoView({block: 'center'});
   [...tabs.children].forEach(b => b.setAttribute('aria-selected', String(b.textContent === day)));
 }
 order.forEach(d => {
