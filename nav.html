@@ -88,7 +88,7 @@ h1{font-family:'Gothic A1',sans-serif;font-weight:900;font-size:18px;margin:0;le
 </head>
 <body>
 <div class="bar">
-  <div class="brand"><h1>어게인 차량 네비</h1><span class="sub">2026 2학기 · 갱신 8/20 16:43</span></div>
+  <div class="brand"><h1>어게인 차량 네비</h1><span class="sub">2026 2학기 · 갱신 8/20 18:06</span></div>
   <div class="tabs" role="tablist" id="tabs"></div>
 </div>
 <div class="list" id="list"></div>
@@ -98,7 +98,8 @@ const tabs = document.getElementById('tabs'), list = document.getElementById('li
 const order = ['월','화','수','목','금','토'].filter(d => DATA[d]).concat(Object.keys(DATA).filter(d => d.includes('(')));
 const enc = encodeURIComponent;
 const naverURL = r => `nmap://route/car?dlat=${r.lat}&dlng=${r.lng}&dname=${enc(r.nav)}&appname=again.shuttle`;
-const tmapURL = r => `tmap://route?goalname=${enc(r.nav)}&goaly=${r.lat}&goalx=${r.lng}`;
+// 티맵 공식 스킴은 rGoName/rGoX/rGoY. goalname/goalx/goaly는 구형이라 좌표를 무시하고 이름으로 검색해버린다
+const tmapURL = r => `tmap://route?rGoName=${enc(r.nav)}&rGoX=${r.lng}&rGoY=${r.lat}`;
 const mins = t => { const [h, m] = t.split(':').map(Number); return (h < 9 ? h + 12 : h) * 60 + m };
 const trim = (n, w) => [...new Set((w ? w.split('·').reduce((a, x) => a.split(x + ' ').join(''), n) : n).split(' · '))].join(' · ');
 
