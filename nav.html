@@ -88,7 +88,7 @@ h1{font-family:'Gothic A1',sans-serif;font-weight:900;font-size:18px;margin:0;le
 </head>
 <body>
 <div class="bar">
-  <div class="brand"><h1>어게인 차량 네비</h1><span class="sub">2026 2학기 · 갱신 8/22 09:22</span></div>
+  <div class="brand"><h1>어게인 차량 네비</h1><span class="sub">2026 2학기 · 갱신 8/24 11:24</span></div>
   <div class="tabs" role="tablist" id="tabs"></div>
 </div>
 <div class="list" id="list"></div>
@@ -139,7 +139,13 @@ function render(day){
   foot.textContent = '시각은 운행 계획표 기준이며 실제 교통에 따라 달라집니다. 버튼이 앱을 못 열면 해당 앱 설치를 확인하세요.';
   list.appendChild(foot);
 
-  if (nextIdx > 0) list.children[nextIdx].scrollIntoView({block: 'center'});
+  if (nextIdx > 0) {
+    const el = list.children[nextIdx], bar = document.querySelector('.bar');
+    const top = el.getBoundingClientRect().top + window.scrollY - bar.offsetHeight - 8;
+    window.scrollTo({top: Math.max(0, top)});
+  } else {
+    window.scrollTo({top: 0});
+  }
   [...tabs.children].forEach(b => b.setAttribute('aria-selected', String(b.textContent === day)));
 }
 
@@ -149,7 +155,8 @@ order.forEach(d => {
   b.onclick = () => render(d);
   tabs.appendChild(b);
 });
-render('월');
+const today = ['일','월','화','수','목','금','토'][new Date().getDay()];
+render(order.includes(today) ? today : '월');   // 켜면 오늘 요일 · 현재 시각 다음 정류장이 맨 위
 </script>
 </body>
 </html>
